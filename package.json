@@ -1,0 +1,22 @@
+{
+	"name": "omp-provider-ark",
+	"version": "0.1.0",
+	"private": true,
+	"description": "omp provider extension for Volcengine ARK (火山方舟): maps GET /api/v3/models onto omp model rows",
+	"type": "module",
+	"license": "MIT",
+	"engines": {
+		"node": ">=22.6"
+	},
+	"scripts": {
+		"test": "node --test \"test/*.test.ts\"",
+		"snapshot": "node scripts/snapshot-ark-models.ts",
+		"models": "node scripts/dump-mapped-models.ts",
+		"fixture:ocr": "node scripts/make-ocr-fixture.ts",
+		"verify:wire": "./scripts/verify-wire.sh",
+		"verify:vision": "./scripts/verify-vision.sh"
+	},
+	"omp": {
+		"extensions": ["./src/index.ts"]
+	}
+}

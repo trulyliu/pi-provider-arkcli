@@ -1,0 +1,2730 @@
+{
+	"data": [
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"responses": true
+			},
+			"context_window": 1048576,
+			"created": 1792808954,
+			"domain": "LLM",
+			"effort": {
+				"default_level": "max",
+				"supported_levels": [
+					"low",
+					"high",
+					"max"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "kimi-k3-1-pro-261024",
+			"max_output_tokens": 1048576,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "kimi-k3-1-pro",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 1048576,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "261024"
+		},
+		{
+			"api_supported": {
+				"images/generations": true
+			},
+			"created": 1792549882,
+			"domain": "ImageGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedream-5-5-261028",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image"
+				],
+				"output_modalities": [
+					"image"
+				]
+			},
+			"name": "doubao-seedream-5-5",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_to_image",
+				"image_to_image"
+			],
+			"version": "261028"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1792233559,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"high",
+					"max",
+					"none"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "deepseek-v4-1-flash-economy-261017",
+			"max_output_tokens": 393216,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "deepseek-v4-1-flash-economy",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 393216,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "261017"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1792226977,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"high",
+					"max",
+					"none"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "deepseek-v4-1-flash-261017",
+			"max_output_tokens": 393216,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "deepseek-v4-1-flash",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 393216,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "261017"
+		},
+		{
+			"api_supported": {
+				"images/generations": true
+			},
+			"created": 1789531767,
+			"domain": "ImageGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedream-5-0-flash-260915",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image"
+				],
+				"output_modalities": [
+					"image"
+				]
+			},
+			"name": "doubao-seedream-5-0-flash",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_to_image",
+				"image_to_image"
+			],
+			"version": "260915"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1789472816,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-1-pro-260915",
+			"max_output_tokens": 262144,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-1-pro",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 262144,
+				"max_reasoning_token_length": 262144
+			},
+			"version": "260915"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1789362846,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"high",
+					"max",
+					"none"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "deepseek-v4-1-flash-260910",
+			"max_output_tokens": 393216,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "deepseek-v4-1-flash",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 393216,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260910"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1788427503,
+			"domain": "LLM",
+			"effort": {
+				"default_level": "max",
+				"supported_levels": [
+					"low",
+					"high",
+					"max"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"auto",
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "glm-5-3-flash-260828",
+			"max_output_tokens": 131072,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "glm-5-3-flash",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 131072,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260828"
+		},
+		{
+			"api_supported": {
+				"batch/chat/completions": true,
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"systemone": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1788247689,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-1-lite-260915",
+			"max_output_tokens": 262144,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video",
+					"audio"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-1-lite",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 262144,
+				"max_reasoning_token_length": 262144
+			},
+			"version": "260915"
+		},
+		{
+			"api_supported": {
+				"batch/chat/completions": true,
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1786682407,
+			"domain": "LLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"none",
+					"low",
+					"high",
+					"max",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "deepseek-v4-pro-ga-260813",
+			"max_output_tokens": 393216,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "deepseek-v4-pro-ga",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 393216,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260813"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1785748879,
+			"domain": "LLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"none",
+					"low",
+					"high",
+					"max",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "deepseek-v4-flash-ga-260731",
+			"max_output_tokens": 393216,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "deepseek-v4-flash-ga",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 393216,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260731"
+		},
+		{
+			"api_supported": {
+				"contents/generations": true
+			},
+			"created": 1782822149,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-2-5-260628",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video",
+					"audio"
+				],
+				"output_modalities": [
+					"video"
+				]
+			},
+			"name": "doubao-seedance-2-5",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"multimodal_to_video",
+				"video_editing",
+				"video_extension"
+			],
+			"version": "260628"
+		},
+		{
+			"created": 1782821774,
+			"domain": "ImageGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedream-5-0-pro-260628",
+			"modalities": {
+				"input_modalities": [
+					"image",
+					"text"
+				],
+				"output_modalities": [
+					"image"
+				]
+			},
+			"name": "doubao-seedream-5-0-pro",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_to_image",
+				"image_to_image"
+			],
+			"version": "260628"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1782373705,
+			"domain": "LLM",
+			"effort": {
+				"default_level": "max",
+				"supported_levels": [
+					"none",
+					"minimal",
+					"high",
+					"max"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "glm-5-2-260617",
+			"max_output_tokens": 131072,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "glm-5-2",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 131072,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260617"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1782135661,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-evolving",
+			"max_output_tokens": 262144,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-evolving",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 262144,
+				"max_reasoning_token_length": 262144
+			},
+			"version": "latest-version"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 131072,
+			"created": 1781612406,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "minimal",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seed-character-260628",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-character",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 131072,
+				"max_output_token_length": 32768,
+				"max_reasoning_token_length": 32768
+			},
+			"version": "260628"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 262144,
+			"created": 1781612321,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-1-turbo-260628",
+			"max_output_tokens": 262144,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-1-turbo",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 262144,
+				"max_input_token_length": 262144,
+				"max_output_token_length": 262144,
+				"max_reasoning_token_length": 262144
+			},
+			"version": "260628"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 262144,
+			"created": 1781612200,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-1-pro-260628",
+			"max_output_tokens": 262144,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-1-pro",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 262144,
+				"max_input_token_length": 262144,
+				"max_output_token_length": 262144,
+				"max_reasoning_token_length": 262144
+			},
+			"version": "260628"
+		},
+		{
+			"api_supported": {
+				"contents/generations": true
+			},
+			"created": 1781024994,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-2-0-mini-260615",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video",
+					"audio"
+				],
+				"output_modalities": [
+					"video"
+				]
+			},
+			"name": "doubao-seedance-2-0-mini",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"multimodal_to_video",
+				"video_editing",
+				"video_extension"
+			],
+			"version": "260615"
+		},
+		{
+			"api_supported": {
+				"batch/chat/completions": true,
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 1048576,
+			"created": 1778837387,
+			"domain": "LLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"high",
+					"max",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "deepseek-v4-pro-260425",
+			"max_output_tokens": 393216,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "deepseek-v4-pro",
+			"object": "model",
+			"status": "Retiring",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 1048576,
+				"max_input_token_length": 1048576,
+				"max_output_token_length": 393216,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260425"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 262144,
+			"created": 1778037480,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "medium",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-0-lite-260428",
+			"max_output_tokens": 131072,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video",
+					"audio"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-0-lite",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering",
+				"speech_to_text"
+			],
+			"token_limits": {
+				"context_window": 262144,
+				"max_input_token_length": 229376,
+				"max_output_token_length": 131072,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260428"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 262144,
+			"created": 1778037357,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "medium",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-0-mini-260428",
+			"max_output_tokens": 131072,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"video",
+					"image",
+					"audio"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-0-mini",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering",
+				"speech_to_text"
+			],
+			"token_limits": {
+				"context_window": 262144,
+				"max_input_token_length": 229376,
+				"max_output_token_length": 131072,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260428"
+		},
+		{
+			"created": 1776349840,
+			"domain": "ImageGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedream-4-0-20260415",
+			"name": "doubao-seedream-4-0",
+			"object": "model",
+			"status": "Published",
+			"version": "20260415"
+		},
+		{
+			"api_supported": {
+				"contents/generations": true
+			},
+			"created": 1775281921,
+			"domain": "3DGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seed3d-2-0-260328",
+			"modalities": {
+				"input_modalities": [
+					"image"
+				],
+				"output_modalities": [
+					"3D"
+				]
+			},
+			"name": "doubao-seed3d-2-0",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"image_to_3D"
+			],
+			"version": "260328"
+		},
+		{
+			"created": 1774431204,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "hitem3d-2-0-251223",
+			"name": "hitem3d-2-0",
+			"object": "model",
+			"status": "Published",
+			"version": "251223"
+		},
+		{
+			"created": 1774428230,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "hyper3d-gen2-260112",
+			"name": "hyper3d-gen2",
+			"object": "model",
+			"status": "Published",
+			"version": "260112"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 262144,
+			"created": 1770998079,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"high",
+					"medium",
+					"low",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-0-code-preview-260215",
+			"max_output_tokens": 131072,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-0-code",
+			"object": "model",
+			"status": "Retiring",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 262144,
+				"max_input_token_length": 229376,
+				"max_output_token_length": 131072,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "preview-260215"
+		},
+		{
+			"api_supported": {
+				"contents/generations": true
+			},
+			"created": 1770734929,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-2-0-fast-260128",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video",
+					"audio"
+				],
+				"output_modalities": [
+					"video"
+				]
+			},
+			"name": "doubao-seedance-2-0-fast",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"multimodal_to_video",
+				"video_editing",
+				"video_extension"
+			],
+			"version": "260128"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 262144,
+			"created": 1770361777,
+			"domain": "VLM",
+			"effort": {
+				"default_level": "high",
+				"supported_levels": [
+					"low",
+					"medium",
+					"high",
+					"minimal"
+				]
+			},
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": true,
+					"json_schema": true
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-2-0-pro-260215",
+			"max_output_tokens": 131072,
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-2-0-pro",
+			"object": "model",
+			"status": "Retiring",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"token_limits": {
+				"context_window": 262144,
+				"max_input_token_length": 229376,
+				"max_output_token_length": 131072,
+				"max_reasoning_token_length": 131072
+			},
+			"version": "260215"
+		},
+		{
+			"api_supported": {
+				"images/generations": true
+			},
+			"created": 1770190658,
+			"domain": "ImageGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedream-5-0-260128",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image"
+				],
+				"output_modalities": [
+					"image"
+				]
+			},
+			"name": "doubao-seedream-5-0",
+			"object": "model",
+			"status": "Retiring",
+			"task_type": [
+				"text_to_image",
+				"image_to_image"
+			],
+			"version": "260128"
+		},
+		{
+			"api_supported": {
+				"contents/generations": true
+			},
+			"created": 1770189126,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-2-0-260128",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video",
+					"audio"
+				],
+				"output_modalities": [
+					"video"
+				]
+			},
+			"name": "doubao-seedance-2-0",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"multimodal_to_video",
+				"video_editing",
+				"video_extension"
+			],
+			"version": "260128"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true,
+				"messages": true,
+				"responses": true,
+				"tokenization": true
+			},
+			"context_window": 131072,
+			"created": 1767958115,
+			"domain": "LLM",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": true,
+					"session_cache": true
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": true
+				}
+			},
+			"id": "doubao-seed-character-251128",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-seed-character",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 98304,
+				"max_output_token_length": 32768
+			},
+			"version": "251128"
+		},
+		{
+			"api_supported": {
+				"embeddings/multimodal": true
+			},
+			"context_window": 131072,
+			"created": 1764645281,
+			"domain": "Embedding",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-vision-251215",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"embedding"
+				]
+			},
+			"name": "doubao-embedding-vision",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"image_embedding",
+				"text_embedding"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 131072
+			},
+			"version": "251215"
+		},
+		{
+			"api_supported": {
+				"images/generations": true
+			},
+			"created": 1764294940,
+			"domain": "ImageGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedream-4-5-251128",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image"
+				],
+				"output_modalities": [
+					"image"
+				]
+			},
+			"name": "doubao-seedream-4-5",
+			"object": "model",
+			"status": "Retiring",
+			"version": "251128"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true
+			},
+			"context_window": 131072,
+			"created": 1762786375,
+			"domain": "LLM",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "qwen3-14b-20250429",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "qwen3-14b",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 98304,
+				"max_output_token_length": 32768,
+				"max_reasoning_token_length": 32768
+			},
+			"version": "20250429"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true
+			},
+			"context_window": 32768,
+			"created": 1762786120,
+			"domain": "LLM",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "qwen3-0-6b-20250429",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "qwen3-0-6b",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 32768,
+				"max_input_token_length": 32768,
+				"max_output_token_length": 32768
+			},
+			"version": "20250429"
+		},
+		{
+			"api_supported": {
+				"contents/generations": true
+			},
+			"created": 1760414492,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-1-0-pro-fast-251015",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image"
+				],
+				"output_modalities": [
+					"video"
+				]
+			},
+			"name": "doubao-seedance-1-0-pro-fast",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_to_video",
+				"image_to_video"
+			],
+			"version": "251015"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true
+			},
+			"created": 1758877484,
+			"domain": "Router",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "doubao-smart-router-250928",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "doubao-smart-router",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation",
+				"visual_question_answering"
+			],
+			"version": "250928"
+		},
+		{
+			"created": 1758007209,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seed-translation-250915",
+			"name": "doubao-seed-translation",
+			"object": "model",
+			"status": "Published",
+			"version": "250915"
+		},
+		{
+			"api_supported": {
+				"images/generations": true
+			},
+			"created": 1757244120,
+			"domain": "ImageGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedream-4-0-250828",
+			"modalities": {
+				"input_modalities": [
+					"image",
+					"text"
+				],
+				"output_modalities": [
+					"image"
+				]
+			},
+			"name": "doubao-seedream-4-0",
+			"object": "model",
+			"status": "Retiring",
+			"version": "250828"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true
+			},
+			"context_window": 131072,
+			"created": 1756905592,
+			"domain": "LLM",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "qwen2-5-72b-20240919",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "qwen2-5-72b",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 98304,
+				"max_output_token_length": 32768
+			},
+			"version": "20240919"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true
+			},
+			"context_window": 131072,
+			"created": 1756905470,
+			"domain": "LLM",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "qwen3-32b-20250429",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "qwen3-32b",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 98304,
+				"max_output_token_length": 32768
+			},
+			"version": "20250429"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true
+			},
+			"context_window": 131072,
+			"created": 1756904653,
+			"domain": "LLM",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "qwen3-8b-20250429",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "qwen3-8b",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 98304,
+				"max_output_token_length": 32768
+			},
+			"version": "20250429"
+		},
+		{
+			"api_supported": {
+				"chat/completions": true
+			},
+			"context_window": 131072,
+			"created": 1756904544,
+			"domain": "LLM",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"thinking": {
+					"types": [
+						"enabled",
+						"disabled"
+					]
+				},
+				"tools": {
+					"function_calling": true,
+					"web_search": false
+				}
+			},
+			"id": "glm-4-5-air-20250728",
+			"max_output_tokens": 32768,
+			"modalities": {
+				"input_modalities": [
+					"text"
+				],
+				"output_modalities": [
+					"text"
+				]
+			},
+			"name": "glm-4-5-air",
+			"object": "model",
+			"status": "Published",
+			"task_type": [
+				"text_generation"
+			],
+			"token_limits": {
+				"context_window": 131072,
+				"max_input_token_length": 98304,
+				"max_output_token_length": 32768
+			},
+			"version": "20250728"
+		},
+		{
+			"api_supported": {
+				"embeddings/multimodal": true
+			},
+			"created": 1750314847,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-vision-250615",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image",
+					"video"
+				],
+				"output_modalities": [
+					"embedding"
+				]
+			},
+			"name": "doubao-embedding-vision",
+			"object": "model",
+			"status": "Retiring",
+			"version": "250615"
+		},
+		{
+			"api_supported": {
+				"contents/generations": true
+			},
+			"created": 1749465881,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-1-0-pro-250528",
+			"modalities": {
+				"input_modalities": [
+					"text",
+					"image"
+				],
+				"output_modalities": [
+					"video"
+				]
+			},
+			"name": "doubao-seedance-1-0-pro",
+			"object": "model",
+			"status": "Retiring",
+			"task_type": [
+				"text_to_video",
+				"image_to_video"
+			],
+			"version": "250528"
+		},
+		{
+			"api_supported": {
+				"embeddings": true
+			},
+			"created": 1747668176,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-large-text-250515",
+			"name": "doubao-embedding-large",
+			"object": "model",
+			"status": "Retiring",
+			"version": "text-250515"
+		},
+		{
+			"created": 1745578941,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-1-0-lite-t2v-250428",
+			"name": "doubao-seedance-1-0-lite-t2v",
+			"object": "model",
+			"status": "Retiring",
+			"version": "250428"
+		},
+		{
+			"created": 1745578849,
+			"domain": "VideoGeneration",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-seedance-1-0-lite-i2v-250428",
+			"name": "doubao-seedance-1-0-lite-i2v",
+			"object": "model",
+			"status": "Retiring",
+			"version": "250428"
+		},
+		{
+			"api_supported": {
+				"embeddings": true,
+				"embeddings/multimodal": true
+			},
+			"created": 1744105858,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-vision-250328",
+			"name": "doubao-embedding-vision",
+			"object": "model",
+			"status": "Retiring",
+			"version": "250328"
+		},
+		{
+			"api_supported": {
+				"embeddings/multimodal": true
+			},
+			"created": 1737031443,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": true,
+					"batch_job": true
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-vision-241215",
+			"name": "doubao-embedding-vision",
+			"object": "model",
+			"status": "Retiring",
+			"version": "241215"
+		},
+		{
+			"api_supported": {
+				"embeddings": true
+			},
+			"created": 1727248240,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-large-text-240915",
+			"name": "doubao-embedding-large",
+			"object": "model",
+			"status": "Retiring",
+			"version": "text-240915"
+		},
+		{
+			"api_supported": {
+				"embeddings": true
+			},
+			"created": 1720700820,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-text-240715",
+			"name": "doubao-embedding",
+			"object": "model",
+			"status": "Retiring",
+			"version": "text-240715"
+		},
+		{
+			"api_supported": {
+				"embeddings": true
+			},
+			"created": 1715588483,
+			"domain": "",
+			"features": {
+				"batch": {
+					"batch_chat": false,
+					"batch_job": false
+				},
+				"cache": {
+					"prefix_cache": false,
+					"session_cache": false
+				},
+				"structured_outputs": {
+					"json_object": false,
+					"json_schema": false
+				},
+				"tools": {
+					"function_calling": false,
+					"web_search": false
+				}
+			},
+			"id": "doubao-embedding-text-240515",
+			"name": "doubao-embedding",
+			"object": "model",
+			"status": "Retiring",
+			"version": "text-240515"
+		}
+	],
+	"object": "list"
+}
