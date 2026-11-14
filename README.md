@@ -26,6 +26,16 @@ mkdir -p ~/.omp/agent/extensions
 ln -sfn ~/src/omp-provider-ark ~/.omp/agent/extensions/omp-provider-ark
 ```
 
+The extension root is `<agent dir>/extensions` — `~/.omp/agent/extensions` by
+default, or `$PI_CODING_AGENT_DIR/extensions`. Each entry is a `.ts`/`.js` file, a
+directory with `index.ts`/`index.js`, or a directory whose `package.json` declares
+`omp.extensions` (this repo does). Symlinked directories are followed, so the
+clone stays a clone.
+
+Verified: with only a symlink there,
+`omp models --kind all` lists 27 chat + 5 image + 4 embedding `arkcli` rows and no
+`-e` flag.
+
 Or point omp at the entry file without installing:
 
 ```bash

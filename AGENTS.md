@@ -130,6 +130,7 @@ same commit. A future run should not need to rediscover anything written here.
 |---|---|
 | capabilities still 128K / text-only | stale `<agentdir>/models.db`; `-e` path wrong; provider id mismatch |
 | an image model "missing" | `omp models --json` without `--kind all` (chat-only view) |
+| nothing loads without `-e` | symlink is not under `<agent dir>/extensions`; a sibling `extensions/` next to the agent dir is not scanned |
 | `models.yml validation failed` | an invalid `input` value (`video`/`audio`) |
 | provider missing entirely | `apiKey` not set (`ARK_API_KEY` unset) — omp requires it to register models |
 | `--thinking off` still thinks | `reasoningDisableMode` missing; or a `whenThinking`/`extraBody` injected thinking |
