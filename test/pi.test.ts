@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { afterEach, describe, it } from "node:test";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { after, afterEach, beforeEach, describe, it } from "node:test";
 
 import { mapArkModels, type ArkModelRow, type OmpModelRow } from "../src/ark.ts";
 import arkcliExtension from "../src/index.ts";
@@ -31,6 +33,18 @@ function ompRow(id: string): OmpModelRow {
 	assert.ok(row, `fixture is missing ${id}`);
 	return row;
 }
+
+// Each test gets an empty cache directory: a catalog discovered by one test
+// must never answer the next one's network assertion.
+const cacheDirs: string[] = [];
+beforeEach(() => {
+	const dir = mkdtempSync(join(tmpdir(), "arkcli-pi-test-"));
+	cacheDirs.push(dir);
+	process.env.ARKCLI_CACHE_DIR = dir;
+});
+after(() => {
+	for (const dir of cacheDirs) rmSync(dir, { recursive: true, force: true });
+});
 
 function jsonResponse(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });

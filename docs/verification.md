@@ -12,10 +12,77 @@ worth asserting and a capture proxy is the only way to see it.
 npm test          # or: node --test "test/*.test.ts"
 ```
 
-Expect `pass 53`, `fail 0`. These pin the mapping rules against the captured
+Expect `pass 77`, `fail 0`. These pin the mapping rules against the captured
 payload, the discovery/registration contract (including that `ARK_BASE_URL` is
-honoured), pi's row conversion, and pi's image request/response shape, so a
-regression fails without spending tokens.
+honoured), the discovery cache (keys, TTL, isolation, one-shot gating), pi's row
+conversion, and pi's image request/response shape, so a regression fails without
+spending tokens. Every test that discovers models points `ARKCLI_CACHE_DIR` at a
+fresh `mkdtemp` directory, so the suite never reads or writes the user's cache.
+
+## 0b. Startup does not block on ARK
+
+Discovery is cached per endpoint+key. Nothing here spends a token; the point is
+that a start only waits for ARK the first time.
+
+The cache is keyed by endpoint **and** key, so both runs must use the same
+`ARK_BASE_URL`. Do the cold run through the capture proxy, then replace the proxy
+with a listener that accepts and never answers.
+
+```bash
+PORT=19777
+CAPTURE_PORT=$PORT CAPTURE_LOG=/tmp/ark-cold.jsonl python3 scripts/capture-proxy.py >/dev/null 2>&1 &
+sleep 1
+
+# Cold cache: one /models request, the only run allowed to wait.
+rm -rf /tmp/arkcache /tmp/arkslow
+ARKCLI_CACHE_DIR=/tmp/arkcache PI_CODING_AGENT_DIR=/tmp/arkslow ARK_BASE_URL=http://127.0.0.1:$PORT \
+  omp models --kind all --json -e "$PWD/src/index.ts" \
+  | jq '[.models[]|select(.provider=="arkcli")]|length'          # 36
+kill %1
+
+# Warm cache, dead endpoint: no request is made, so nothing can wait.
+nc -lk 127.0.0.1 $PORT >/dev/null &
+rm -rf /tmp/arkwarm
+time ARKCLI_CACHE_DIR=/tmp/arkcache PI_CODING_AGENT_DIR=/tmp/arkwarm ARK_BASE_URL=http://127.0.0.1:$PORT \
+  omp models --kind all --json -e "$PWD/src/index.ts" \
+  | jq '[.models[]|select(.provider=="arkcli")]|length'          # 36
+```
+
+A cache **miss** against that dead endpoint is the allowed first run and does
+wait (~15 s cap); delete `/tmp/arkcache` to observe it. A *failed* attempt is
+remembered for 5 minutes, so the start after a failure does not wait again:
+
+```bash
+rm -rf /tmp/arkcache /tmp/arkfail1 /tmp/arkfail2
+ARKCLI_CACHE_DIR=/tmp/arkcache PI_CODING_AGENT_DIR=/tmp/arkfail1 ARK_BASE_URL=http://127.0.0.1:1 \
+  omp models --json -e "$PWD/src/index.ts" >/dev/null     # ~8 s baseline + failure path
+cat /tmp/arkcache/*.json | jq -c '{rows: (.rows|length), failedAt}'   # rows 0, failedAt set
+time ARKCLI_CACHE_DIR=/tmp/arkcache PI_CODING_AGENT_DIR=/tmp/arkfail2 ARK_BASE_URL=http://127.0.0.1:1 \
+  omp models --json -e "$PWD/src/index.ts" >/dev/null     # no discovery wait
+```
+
+Measured, with `ARK_BASE_URL` pointed at a proxy that never answers `/models`:
+
+| invocation | wall time |
+|---|---|
+| `omp models --json`, no extension | 8.1 s |
+| same, extension + warm cache | 8.2 s |
+| same, extension + cold cache | 17.0 s (the allowed first run) |
+| `omp` TUI first paint, warm cache | 0.50 s |
+| `pi` TUI first paint, warm cache | 0.30 s |
+
+A one-shot invocation must never start a refresh it cannot use (a pending fetch
+delays exit — 22 s measured with a 20 s abort) and an interactive one must:
+
+```bash
+# one-shot: zero requests even with a stale cache
+ARKCLI_CACHE_TTL_MS=0 ARKCLI_CACHE_DIR=/tmp/arkcache PI_CODING_AGENT_DIR=/tmp/arkoneshot \
+  omp models --json -e "$PWD/src/index.ts" >/dev/null      # no request observed
+
+# TUI: stale cache triggers exactly one request behind the UI
+ARKCLI_CACHE_TTL_MS=0 ARKCLI_CACHE_DIR=/tmp/arkcache PI_CODING_AGENT_DIR=/tmp/arktui \
+  omp -e "$PWD/src/index.ts"                               # Ctrl-C after ~15 s
+```
 
 ## 1. Discovery produces the right capabilities
 
@@ -123,11 +190,21 @@ ok  --thinking max   -> reasoning_effort='max' max_tokens=393216
 wire assertions passed for arkcli/deepseek-v4-1-flash-261017
 ```
 
-Why the interactive warm-up is required: pi calls `refreshModels` three times with
-`allowNetwork: false` and `credential.type === "none"` for `--list-models` and
-`-p`; only the interactive TUI (`interactive-mode.js` → `refreshModelCatalogs`)
-reaches `allowNetwork: true` with `api_key`. A cold agent dir therefore shows zero
-`arkcli` rows in `-p` no matter what the registration says.
+pi calls `refreshModels` three times with `allowNetwork: false` and
+`credential.type === "none"` for `--list-models` and `-p`; only the interactive
+TUI (`interactive-mode.js` → `refreshModelCatalogs`) reaches `allowNetwork: true`
+with `api_key`. Those one-shot calls read the shared discovery cache, so after the
+first discovery anywhere (omp or pi, any agent dir) a fresh agent dir lists the
+same rows with no network:
+
+```bash
+rm -rf /tmp/pifresh
+PI_CODING_AGENT_DIR=/tmp/pifresh pi -e "$PWD/src/index.ts" --list-models | grep -c '^arkcli'  # 27
+```
+
+Measured: 0.95 s with `ARK_BASE_URL` pointed at an endpoint that never answers
+`/models`. Before the cache existed this printed 0 until an interactive run had
+persisted the store.
 
 `pi update --models` does not substitute: it refreshes built-in catalogs only and
 never loads extensions (measured: prints `Model catalogs refreshed`, store stays

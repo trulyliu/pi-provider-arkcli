@@ -15,6 +15,7 @@ MODEL="${1:-deepseek-v4-1-flash-261017}"
 PORT="${CAPTURE_PORT:-$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()')}"
 LOG="$(mktemp -t pi-wire.XXXXXX.jsonl)"
 AGENT_DIR="$(mktemp -d -t pi-agent.XXXXXX)"
+CACHE_DIR="$(mktemp -d -t arkcli-cache.XXXXXX)"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXT="$REPO/src/index.ts"
 
@@ -24,7 +25,7 @@ command -v script >/dev/null || { echo "script(1) is required to warm the catalo
 
 cleanup() {
   [[ -n "${PROXY_PID:-}" ]] && kill "$PROXY_PID" 2>/dev/null || true
-  rm -rf "$AGENT_DIR"
+  rm -rf "$AGENT_DIR" "$CACHE_DIR"
 }
 trap cleanup EXIT
 
@@ -43,11 +44,12 @@ done
 
 export ARK_BASE_URL="http://127.0.0.1:$PORT"
 export PI_CODING_AGENT_DIR="$AGENT_DIR"
+export ARKCLI_CACHE_DIR="$CACHE_DIR"
 
 # Warm the catalog. Interactive mode schedules the network refresh after the UI
 # starts, so the session must live a few seconds; Ctrl-C then exits it.
 echo "warming the catalog through $ARK_BASE_URL (interactive)…"
-( sleep 12; printf '\x03' ) | timeout 120 script -qec "env PI_CODING_AGENT_DIR=$AGENT_DIR ARK_BASE_URL=$ARK_BASE_URL ARK_API_KEY=$ARK_API_KEY pi -e $EXT" \
+( sleep 12; printf '\x03' ) | timeout 120 script -qec "env PI_CODING_AGENT_DIR=$AGENT_DIR ARKCLI_CACHE_DIR=$CACHE_DIR ARK_BASE_URL=$ARK_BASE_URL ARK_API_KEY=$ARK_API_KEY pi -e $EXT" \
   /tmp/pi-wire-tui.log >/dev/null 2>&1 || true
 
 ROWS="$(python3 - "$AGENT_DIR/models-store.json" <<'PY'

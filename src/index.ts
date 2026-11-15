@@ -27,6 +27,7 @@ import {
 	mapArkModels,
 	type OmpModelRow,
 } from "./ark.ts";
+import { modelCacheFile, readModelCache, writeModelCache } from "./cache.ts";
 import { fetchArkModels } from "./discovery.ts";
 import {
 	completePiModel,
@@ -59,24 +60,177 @@ function resolveBaseUrl(): string {
 }
 
 /**
- * When discovery is unreachable or the account has no key, registering no rows
- * is safe: omp keeps the provider unselectable rather than inventing models.
- * A thrown error would surface as a discovery failure for the whole provider.
+ * How long a cached catalog is served without any network attempt. ARK adds
+ * model versions rarely; omp's own catalog cache is 2 h and pi's remote-catalog
+ * interval is 4 h, so 6 h keeps this extension from being the first thing that
+ * blocks a start. `ARKCLI_CACHE_TTL_MS` overrides it (0 forces a refresh on the
+ * next interactive start).
  */
-export async function discoverArkModels(options: {
-	baseUrl?: string;
-	apiKey?: string;
+export const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+
+export function cacheTtlMs(env: NodeJS.ProcessEnv = process.env): number {
+	const raw = env.ARKCLI_CACHE_TTL_MS?.trim();
+	if (!raw) return CACHE_TTL_MS;
+	const parsed = Number(raw);
+	return Number.isFinite(parsed) && parsed >= 0 ? parsed : CACHE_TTL_MS;
+}
+
+/** Bound for a refresh that runs behind an interactive session. */
+const BACKGROUND_REFRESH_TIMEOUT_MS = 10_000;
+
+/** A cache miss may wait, but not forever: omp abandons discovery at 15 s anyway. */
+const FIRST_RUN_TIMEOUT_MS = 15_000;
+
+/** After a failed attempt, do not make the next start wait again for this long. */
+export const NEGATIVE_TTL_MS = 5 * 60 * 1000;
+
+/**
+ * One-shot invocations must not keep the event loop alive for a refresh they
+ * cannot use: a pending fetch delays process exit until it settles or aborts
+ * (measured: `omp models --json` 8.1 s at baseline, 22 s with a 20 s abort).
+ */
+const ONE_SHOT_FLAGS: Record<string, true> = {
+	"-p": true,
+	"--print": true,
+	"--list-models": true,
+	"-v": true,
+	"--version": true,
+	"-h": true,
+	"--help": true,
+};
+
+/**
+ * A bare word after the binary is a subcommand (`omp models`, `omp doctor`), and
+ * subcommands are one-shot even on a terminal: measured argv is
+ * `[bun, /…/omp-linux-x64, models, --json, …]` for `omp models --json` and
+ * `[bun, /…/omp-linux-x64, -e, …]` for the TUI.
+ */
+export function isInteractiveSession(
+	argv: readonly string[] = process.argv,
+	stdoutIsTTY: boolean = process.stdout?.isTTY === true,
+): boolean {
+	if (!stdoutIsTTY) return false;
+	const args = argv.slice(2);
+	if (args.some(argument => ONE_SHOT_FLAGS[argument] === true)) return false;
+	// `--mode=json|text` runs one turn and exits; the rpc modes stay up.
+	if (args.some(argument => argument === "--mode=json" || argument === "--mode=text")) return false;
+	const first = args[0];
+	return first === undefined || first.startsWith("-");
+}
+
+/** One in-flight operation per cache file, so a double discovery call shares it. */
+const inFlightRefreshes = new Map<string, Promise<void>>();
+const inFlightFetches = new Map<string, Promise<ArkModelRow[]>>();
+
+/**
+ * Refresh behind the caller. The promise is intentionally not returned: the
+ * host must never await this, and a failure only loses one refresh cycle.
+ */
+function refreshBehind(
+	file: string,
+	baseUrl: string,
+	apiKey: string,
+	warn: (message: string) => void,
+	fetchImpl?: typeof globalThis.fetch,
+): void {
+	if (inFlightRefreshes.has(file)) return;
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), BACKGROUND_REFRESH_TIMEOUT_MS);
+	const task = (async () => {
+		try {
+			const rows = await fetchArkModels({ baseUrl, apiKey, signal: controller.signal, fetch: fetchImpl });
+			// Never replace a usable catalog with an empty one: the empty entry
+			// would be treated as a miss and the next start would block.
+			if (rows.length > 0) await writeModelCache(file, { baseUrl, checkedAt: Date.now(), rows });
+		} catch (error) {
+			if (!controller.signal.aborted) {
+				warn(
+					`${PROVIDER_ID}: background model refresh failed; keeping the cached catalog. ${
+						error instanceof Error ? error.message : String(error)
+					}`,
+				);
+			}
+		} finally {
+			clearTimeout(timer);
+			inFlightRefreshes.delete(file);
+		}
+	})();
+	inFlightRefreshes.set(file, task);
+}
+
+/** The blocking path: only a cache miss may wait for ARK. */
+function fetchOnce(
+	file: string,
+	baseUrl: string,
+	apiKey: string,
+	signal?: AbortSignal,
+	fetchImpl?: typeof globalThis.fetch,
+): Promise<ArkModelRow[]> {
+	const existing = inFlightFetches.get(file);
+	if (existing) return existing;
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), FIRST_RUN_TIMEOUT_MS);
+	const timeout = controller.signal;
+	const combined = signal ? AbortSignal.any([signal, timeout]) : timeout;
+	const task = (async () => {
+		const rows = await fetchArkModels({ baseUrl, apiKey, signal: combined, fetch: fetchImpl });
+		await writeModelCache(file, { baseUrl, checkedAt: Date.now(), rows });
+		return rows;
+	})().finally(() => {
+		clearTimeout(timer);
+		inFlightFetches.delete(file);
+	});
+	inFlightFetches.set(file, task);
+	return task;
+}
+
+/**
+ * Cache-first discovery. The first run for an endpoint+key waits for ARK (there
+ * is nothing else to serve); every later run answers from disk and, when the
+ * entry is stale, refreshes behind an interactive session only.
+ */
+async function loadArkRows(options: {
+	baseUrl: string;
+	apiKey: string;
 	signal?: AbortSignal;
 	fetch?: typeof globalThis.fetch;
-}): Promise<OmpModelRow[]> {
-	if (!options.apiKey) return [];
-	const rows: ArkModelRow[] = await fetchArkModels({
-		baseUrl: options.baseUrl,
-		apiKey: options.apiKey,
-		signal: options.signal,
-		fetch: options.fetch,
-	});
-	return mapArkModels(rows).models;
+	warn: (message: string) => void;
+	allowNetwork: boolean;
+}): Promise<{ rows: ArkModelRow[]; source: "cache" | "network" | "none" }> {
+	if (!options.apiKey) return { rows: [], source: "none" };
+	const file = modelCacheFile(options.baseUrl, options.apiKey);
+	const cached = await readModelCache(file);
+	const usable = cached && cached.baseUrl === options.baseUrl && cached.rows.length > 0 ? cached : undefined;
+	if (usable) {
+		const stale = Date.now() - usable.checkedAt >= cacheTtlMs();
+		if (stale && options.allowNetwork && isInteractiveSession()) {
+			refreshBehind(file, options.baseUrl, options.apiKey, options.warn, options.fetch);
+		}
+		return { rows: usable.rows, source: "cache" };
+	}
+
+	// An empty or failed entry is not a catalog: retry, but not every start.
+	// Without this, an unreachable endpoint costs the full timeout on each start.
+	const recentlyFailed =
+		cached?.failedAt !== undefined && Date.now() - cached.failedAt < NEGATIVE_TTL_MS;
+	if (recentlyFailed) {
+		if (options.allowNetwork && isInteractiveSession()) {
+			refreshBehind(file, options.baseUrl, options.apiKey, options.warn, options.fetch);
+		}
+		return { rows: [], source: "none" };
+	}
+	if (!options.allowNetwork) return { rows: [], source: "none" };
+	try {
+		return { rows: await fetchOnce(file, options.baseUrl, options.apiKey, options.signal, options.fetch), source: "network" };
+	} catch (error) {
+		await writeModelCache(file, { baseUrl: options.baseUrl, checkedAt: Date.now(), rows: [], failedAt: Date.now() });
+		options.warn(
+			`${PROVIDER_ID}: model discovery failed; registering no models for this session. ${
+				error instanceof Error ? error.message : String(error)
+			}`,
+		);
+		return { rows: [], source: "none" };
+	}
 }
 
 /** The omp provider contract (`/models` discovery via `fetchDynamicModels`). */
@@ -126,36 +280,36 @@ export function isPiHost(pi: ArkExtensionApi): boolean {
  * `allowNetwork: true`. `--list-models` and `-p` never reach the network phase,
  * so they see whatever the last interactive run persisted. That is pi's own
  * contract for live catalogs (see `withRemoteCatalog`), not a limitation here.
+ *
+ * Even in the network phase this answers from disk when a catalog exists, so a
+ * start never waits on ARK after the first discovery for that key.
  */
 async function refreshPiModels(
 	context: PiRefreshContext,
 	deps: { baseUrl: string; warn(message: string): void },
 ): Promise<PiModelConfig[]> {
 	const stored = restorePiModels(context.stored?.models, PROVIDER_ID);
-	if (!context.allowNetwork) return stored;
 	if (context.signal.aborted) return stored;
 
 	const apiKey =
 		context.credential?.type === "api_key" ? context.credential.key : process.env[ARK_API_KEY_ENV];
-	if (!apiKey) return stored;
+	const loaded = await loadArkRows({
+		baseUrl: deps.baseUrl,
+		apiKey: apiKey ?? "",
+		signal: context.signal,
+		warn: deps.warn,
+		allowNetwork: context.allowNetwork && !context.signal.aborted,
+	});
+	if (loaded.source === "none") return stored;
 
-	try {
-		const rows = await discoverArkModels({ baseUrl: deps.baseUrl, apiKey, signal: context.signal });
-		const models = mapArkModelsToPi(rows);
+	const models = mapArkModelsToPi(mapArkModels(loaded.rows).models);
+	if (loaded.source === "network") {
 		const persisted: PiStoredModel[] = models.map(model =>
 			completePiModel(model, PROVIDER_ID, deps.baseUrl),
 		);
 		await context.publish({ persist: { models: persisted, checkedAt: Date.now() } });
-		return models;
-	} catch (error) {
-		// Throwing would surface as a model-refresh error for the whole provider.
-		deps.warn(
-			`${PROVIDER_ID}: model discovery failed; keeping the previously discovered models. ${
-				error instanceof Error ? error.message : String(error)
-			}`,
-		);
-		return stored;
 	}
+	return models;
 }
 
 export default function arkcliExtension(pi: ArkExtensionApi) {
@@ -192,16 +346,13 @@ export default function arkcliExtension(pi: ArkExtensionApi) {
 		api: "openai-completions",
 		// omp passes the resolved credential (a key string) or undefined.
 		fetchDynamicModels: async credential => {
-			try {
-				return await discoverArkModels({ baseUrl, apiKey: credential });
-			} catch (error) {
-				warn(
-					`${PROVIDER_ID}: model discovery failed; keeping previously discovered models. ${
-						error instanceof Error ? error.message : String(error)
-					}`,
-				);
-				return [];
-			}
+			const loaded = await loadArkRows({
+				baseUrl,
+				apiKey: credential ?? "",
+				warn,
+				allowNetwork: true,
+			});
+			return mapArkModels(loaded.rows).models;
 		},
 	} satisfies OmpProviderConfig);
 }

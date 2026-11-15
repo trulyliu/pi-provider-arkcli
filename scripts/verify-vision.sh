@@ -13,6 +13,7 @@ MODEL="${1:-deepseek-v4-1-flash-261017}"
 PORT="${CAPTURE_PORT:-$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()')}"
 LOG="$(mktemp -t ark-vision.XXXXXX.jsonl)"
 AGENT_DIR="$(mktemp -d -t ark-agent.XXXXXX)"
+CACHE_DIR="$(mktemp -d -t arkcli-cache.XXXXXX)"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IMAGE="$REPO/test/fixtures/ocr.png"
 EXPECTED_CODE="ARK-7391"
@@ -22,7 +23,7 @@ EXPECTED_CODE="ARK-7391"
 
 cleanup() {
   [[ -n "${PROXY_PID:-}" ]] && kill "$PROXY_PID" 2>/dev/null || true
-  rm -rf "$AGENT_DIR"
+  rm -rf "$AGENT_DIR" "$CACHE_DIR"
 }
 trap cleanup EXIT
 
@@ -40,7 +41,7 @@ for _ in $(seq 50); do
 done
 
 ANSWER="$(env -u OMP_PROFILE -u PI_PROFILE \
-  PI_CODING_AGENT_DIR="$AGENT_DIR" \
+  PI_CODING_AGENT_DIR="$AGENT_DIR" ARKCLI_CACHE_DIR="$CACHE_DIR" \
   ARK_BASE_URL="http://127.0.0.1:$PORT" \
   omp -p --no-session --no-lsp --no-skills --no-rules --no-context-files \
   -e "$REPO/src/index.ts" --model "arkcli/$MODEL" --thinking max \

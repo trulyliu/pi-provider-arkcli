@@ -91,15 +91,26 @@ Measured by logging each call from a probe extension; the interactive network ca
 arrives ~3 s after the UI starts (`interactive-mode.js` schedules
 `refreshModelCatalogs` after `init()`, in parallel with the version check).
 
-So `refreshPiModels` restores `context.stored.models` filtered to this provider and
-returns those when `allowNetwork` is false or no key is available, and only calls
-ARK when the network is allowed. Failures return the stored rows: a throw would
-surface as a provider-wide refresh error.
+`refreshPiModels` reads the shared discovery cache first: a hit is returned
+without touching the network, so even the interactive `allowNetwork: true` call
+answers in ~1 ms and refreshes behind the session only when the entry is older
+than the TTL. A miss falls back to `context.stored.models` (pi's own store) when
+the network is not allowed, and otherwise fetches. Failures return the stored
+rows: a throw would surface as a provider-wide refresh error.
 
-`publish({persist})` is what writes `<agent dir>/models-store.json`; returning the
-list alone does not persist it. Observed: after one interactive session the store
-held 32 `arkcli` rows (27 chat + 5 image), and a later `-p` run logged
-`stored=32` and resolved the model.
+Two stores exist and both are needed:
+
+| store | written by | read by |
+|---|---|---|
+| `<agent dir>/models-store.json` | `context.publish({persist})` | pi itself, via `context.stored` |
+| `<cache dir>/models-<hash>.json` | the extension, on every successful fetch | both hosts, before any network |
+
+Returning a list alone does not persist it; only `publish({persist})` writes pi's
+store. Observed: after one interactive session the store held 32 `arkcli` rows
+(27 chat + 5 image), and a later `-p` run logged `stored=32` and resolved the
+model. Observed with a warm extension cache and a *fresh* agent dir:
+`pi --list-models` showed the same 27 chat rows in 0.95 s with zero requests, so
+`-p` no longer requires a prior interactive run once the cache exists.
 
 ## Image generation
 

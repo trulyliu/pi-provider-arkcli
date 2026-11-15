@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { afterEach, describe, it } from "node:test";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { after, afterEach, beforeEach, describe, it } from "node:test";
 
 import { ArkModelsError, fetchArkModels } from "../src/discovery.ts";
 import arkcliExtension from "../src/index.ts";
@@ -9,6 +11,19 @@ import type { ArkModelRow, OmpModelRow } from "../src/ark.ts";
 const payload = JSON.parse(
 	readFileSync(new URL("./fixtures/ark-models.sample.json", import.meta.url), "utf8"),
 ) as { data: ArkModelRow[] };
+
+// Never touch the user's cache, and never let one test's catalog answer the
+// next: each test gets an empty cache directory.
+const cacheDirs: string[] = [];
+function freshCacheDir(): void {
+	const dir = mkdtempSync(join(tmpdir(), "arkcli-test-"));
+	cacheDirs.push(dir);
+	process.env.ARKCLI_CACHE_DIR = dir;
+}
+beforeEach(freshCacheDir);
+after(() => {
+	for (const dir of cacheDirs) rmSync(dir, { recursive: true, force: true });
+});
 
 function jsonResponse(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
@@ -124,7 +139,7 @@ describe("extension registration", () => {
 
 		const { config, warnings } = register();
 		assert.deepEqual(await config.fetchDynamicModels?.("ark-test"), []);
-		assert.match(warnings.join("\n"), /model discovery failed; keeping previously discovered models/);
+		assert.match(warnings.join("\n"), /model discovery failed; registering no models for this session/);
 	});
 
 	it("registers nothing selectable without a key", async () => {

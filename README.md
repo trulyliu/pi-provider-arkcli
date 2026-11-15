@@ -60,14 +60,12 @@ belong to the same region.
 
 **pi refreshes a live catalog only in interactive mode.** `--list-models` and
 `-p` always call `refreshModels` with `allowNetwork: false` and no credential, so
-they show whatever the last interactive session persisted in
-`<agent dir>/models-store.json`. Run `pi` once (it refreshes a few seconds after
-the UI starts, then Ctrl-C) before relying on `-p`. `pi update --models` does
-**not** help here: it refreshes built-in catalogs only and never loads
-extensions.
+they never touch the network; they read the cached catalog described under
+[Startup cost](#startup-cost). `pi update --models` does **not** help here: it
+refreshes built-in catalogs only and never loads extensions.
 
-Verified: after one interactive session, `pi --list-models` shows 27 `arkcli`
-chat rows and the store holds 32 rows (27 chat + 5 image).
+Verified: after one discovery, `pi --list-models` shows 27 `arkcli` chat rows and
+pi's own store holds 32 rows (27 chat + 5 image).
 
 ### omp
 
@@ -114,10 +112,32 @@ Details: [docs/pi-compatibility.md](docs/pi-compatibility.md).
 | `--thinking off` | `reasoning_effort: "none"` | `reasoning_effort: "none"`, via `thinkingLevelMap.off` |
 | `max_tokens` | pinned by `compat.maxTokensField` | pinned the same way (pi would otherwise auto-detect `max_completion_tokens` for ARK's hostname) |
 
+## Startup cost
+
+Discovery is cached on disk, keyed by endpoint **and** API key, so a start only
+waits for ARK the first time a given key is seen:
+
+| what | when it happens |
+|---|---|
+| blocking `GET /models` | no cache for this endpoint+key yet (bounded to 15 s) |
+| no models, no wait | a fetch failed in the last 5 min, so the next start does not retry the wait |
+| serve cache, no network | cache younger than 6 h (`ARKCLI_CACHE_TTL_MS`) |
+| serve cache + refresh behind | cache older than 6 h or a recent failure, **and** an interactive TUI session |
+| serve cache, no refresh | one-shot invocation: `omp models`, `omp -p`, `omp --mode=json`, `pi -p`, `pi --list-models` |
+
+Measured on this machine: `omp models --json` against a hanging endpoint takes
+8.1 s with no result and 22 s when a fetch is left pending, which is why one-shot
+runs never start a refresh they cannot use. Both TUIs render in under 0.6 s with
+a hanging endpoint and a warm cache.
+
+`ARKCLI_CACHE_DIR` moves the cache (default `$XDG_CACHE_HOME/pi-provider-arkcli`
+or `~/.cache/pi-provider-arkcli`); `ARKCLI_CACHE_TTL_MS=0` forces the next
+interactive start to refresh. Delete the directory to force a fresh discovery.
+
 ## Use
 
 ```bash
-# pi: the model must be in the store, so run once interactively first.
+# pi: a start with no cache waits for ARK; later starts read the cache.
 pi --model arkcli/deepseek-v4-1-flash-261017:high "explain this @screenshot.png"
 pi -p --no-session --model arkcli/deepseek-v4-1-flash-261017:off "quick question"
 
@@ -178,7 +198,7 @@ No build step; both hosts load `src/index.ts` directly (omp via Bun, pi via
 Node's type stripping). Node 22.6+ runs the same files for tests:
 
 ```bash
-node --test "test/*.test.ts"        # 53 tests: mapping, discovery, registration, pi
+node --test "test/*.test.ts"        # 77 tests: mapping, discovery, cache, registration, pi
 node scripts/dump-mapped-models.ts  # review the mapping as a table
 ```
 

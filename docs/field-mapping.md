@@ -102,7 +102,7 @@ default, so one mechanism is enough.
 | `apiKey` or `oauth` required when registering models | Provider always sets `apiKey: "ARK_API_KEY"`. |
 | `fetchDynamicModels` has a 15 s timeout | One `GET /models`, no pagination, no per-model probes. |
 | `thinking` needs a non-empty `efforts` | `thinking` omitted entirely when no level is dialable. |
-| A failed discovery call disables the provider | `discoverArkModels` returns `[]` on error rather than throwing. |
+| A failed discovery call disables the provider | `loadArkRows` returns `[]` on error rather than throwing, and keeps the cached catalog when one exists. |
 
 ## pi-side constraints this mapping respects
 

@@ -47,6 +47,24 @@ implements ARK's image endpoint for pi. See
     error; return `context.stored` rows and log instead.
 14. **Never assume `--list-models`/`-p` see the network.** They always get
     `allowNetwork: false` and no credential; only interactive mode refreshes.
+15. **Never block a host start on `GET /models` more than once per key.** The
+    catalog is cached at `<cache dir>/models-<sha256(baseUrl+key)>.json`; only a
+    cache miss may wait (bounded to 15 s). A stale entry is served immediately
+    and refreshed behind an interactive session — measured: warm cache starts in
+    the same time as no extension at all (8.2 s vs 8.1 s for `omp models`) while
+    a cold one costs 17 s against a hanging endpoint.
+16. **Never start a background refresh in a one-shot invocation.** `omp models`,
+    `omp -p`, `pi -p` and `pi --list-models` are detected from argv (`models`/
+    `doctor` subcommand or `-p`/`--print`/`--list-models`), and a pending fetch
+    delays exit: `omp models --json` goes from 8.1 s to 22 s when one is left
+    running.
+17. **Never cache an empty catalog as a catalog.** An empty list is treated as a
+    miss so one bad response cannot hide every model for a whole TTL. A failed
+    attempt writes `rows: []` plus `failedAt`, which suppresses the *blocking*
+    retry for 5 min (`NEGATIVE_TTL_MS`) — otherwise every start against a dead
+    endpoint would pay the timeout again.
+18. **Never replace a usable catalog with an empty refresh.** The background
+    refresh writes only when `rows.length > 0`.
 
 ## Update procedure
 
@@ -81,9 +99,11 @@ Look specifically for:
 ### 3. Update the mapper
 
 `src/ark.ts` is pure (no host imports) and is the only place ARK→model mapping
-lives. `src/discovery.ts` owns HTTP. `src/pi.ts` converts omp rows to pi configs
-and `src/pi-images.ts` owns pi's image runner (also import-free so omp can parse
-it). `src/index.ts` owns host detection and registration.
+lives. `src/discovery.ts` owns HTTP. `src/cache.ts` owns the on-disk catalog and is
+the only place that decides when a start may touch the network. `src/pi.ts`
+converts omp rows to pi configs and `src/pi-images.ts` owns pi's image runner
+(also import-free so omp can parse it). `src/index.ts` owns host detection and
+registration.
 
 Keep this split: tests import these modules directly with Node's type stripping,
 and omp must be able to parse every file in `src/` even though it never calls the
@@ -155,9 +175,22 @@ ARK_API_KEY=ark-... npm run verify:pi-wire
 ```
 
 `--list-models` and `-p` never call ARK: they always receive
-`allowNetwork: false`. So an empty list there means "no interactive run has
-persisted a catalog yet" (or the interactive refresh failed — check
-`/tmp/pi-wire-tui.log`), not that registration is broken.
+`allowNetwork: false`, so they render whatever the discovery cache holds. An
+empty list there means neither pi's store nor the disk cache has a catalog for
+this endpoint+key yet.
+
+Startup blocking is separate from correctness and has its own checks:
+
+```bash
+# 1. warm cache: zero discovery requests, same wall time as no extension
+ARKCLI_CACHE_DIR=/tmp/cc env -u OMP_PROFILE -u PI_PROFILE PI_CODING_AGENT_DIR=/tmp/warm   omp models --kind all --json -e "$PWD/src/index.ts" >/dev/null   # 36 rows
+# 2. one-shot runs must not refresh; only a TUI does
+ARKCLI_CACHE_TTL_MS=0 ... omp models --json -e "$PWD/src/index.ts"  # still zero requests
+```
+
+Verified numbers on this machine: `omp models --json` is 8.1 s with no extension,
+8.2 s on a warm cache, and 17 s on a cache miss against a hanging endpoint; both
+TUIs first-paint in <0.6 s with a hanging endpoint and a warm cache.
 
 `pi update --models` is **not** a shortcut here: it builds a `ModelRuntime` with
 the built-in providers only (`package-manager-cli.js` → `refreshModelCatalogs`),
@@ -182,6 +215,8 @@ same commit. A future run should not need to rediscover anything written here.
 | model absent from the list | row skipped: run `dump-mapped-models.ts` and read the skip reason |
 | 400 `InvalidParameter` on every call | both `max_tokens` and `max_completion_tokens` sent |
 | `ToolNotOpen` | ARK search component not activated on the account |
+| startup still waits ~15 s on ARK | cache miss for this endpoint+key: the first run is the only one allowed to wait; check `ARKCLI_CACHE_DIR` |
+| stale models after an ARK change | one-shot runs never refresh; start the TUI once, or `ARKCLI_CACHE_TTL_MS=0`, or delete the cache dir |
 
 pi-only:
 
@@ -199,13 +234,16 @@ pi-only:
 
 ## Invariants to keep
 
-- `src/ark.ts`, `src/pi.ts` and `src/pi-images.ts` import nothing from either
-  host, so they run under plain Node and omp can parse them.
+- `src/ark.ts`, `src/pi.ts`, `src/pi-images.ts` and `src/cache.ts` import nothing
+  from either host, so they run under plain Node and omp can parse them.
 - `mapArkModel` never emits `input` values outside `["text","image"]`.
 - `thinking` is omitted (not empty) when no level is dialable.
 - `kind` matches what `api` can serve.
-- Discovery is one HTTP GET; `fetchDynamicModels` has a 15 s budget.
+- Discovery is one HTTP GET, served from disk after the first success;
+  only a cache miss may wait (15 s cap).
 - The pi branch never throws from `refreshModels` and never returns a list it
   cannot also persist.
+- A cache write failure never fails discovery; a cache hit never waits on the
+  network; a one-shot invocation never leaves a fetch pending.
 - Host detection is API-shape only (`registerVirtualModel`); no host package is
   imported.
