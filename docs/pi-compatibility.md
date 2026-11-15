@@ -5,10 +5,12 @@ step differs. `src/ark.ts` produces omp rows, `src/pi.ts` converts those rows to
 pi's `ProviderModelConfig`, and `src/index.ts` picks the branch from the extension
 API it is handed.
 
-Install for pi either as a package (`pi install
-git:github.com/trulyliu/pi-provider-arkcli`, or `pi install ./` from a clone) or
-per invocation (`pi -e <dir>`); `package.json` declares
-`pi.extensions: ["./src/index.ts"]`, so a clone is loadable with no build step.
+Install is one command: `pi install git:github.com/trulyliu/pi-provider-arkcli`
+(omp: `omp plugin install git:github.com/trulyliu/pi-provider-arkcli`).
+`package.json` declares `pi.extensions` / `omp.extensions` as
+`./src/index.ts`, so the clone both hosts fetch is directly loadable and needs no
+build step. During development, skip the install and point a host at the checkout
+with `pi -e <dir>` / `omp -e <dir>`.
 
 Host detection, measured on both:
 

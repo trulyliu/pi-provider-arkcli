@@ -24,36 +24,44 @@ extensions in-process).
 
 [github.com/trulyliu/pi-provider-arkcli](https://github.com/trulyliu/pi-provider-arkcli)
 
-### pi
+### omp
 
-Install it as a pi package — pi clones the repo and records it in
-`~/.pi/agent/settings.json`:
+```bash
+omp plugin install git:github.com/trulyliu/pi-provider-arkcli
+```
+
+That is the whole install: omp clones the repo into its plugin directory, reads
+`omp.extensions` from `package.json`, and loads it on every start.
+
+Update with `omp plugin upgrade pi-provider-arkcli`, remove with
+`omp plugin uninstall pi-provider-arkcli`, inspect with `omp plugin list`.
+
+Verified: after that one command, `omp models --kind all --json` (no `-e`) lists
+27 chat + 5 image + 4 embedding `arkcli` rows.
+
+### pi
 
 ```bash
 pi install git:github.com/trulyliu/pi-provider-arkcli
 ```
 
-Update it later with `pi update git:github.com/trulyliu/pi-provider-arkcli`, and
-remove it with `pi remove git:github.com/trulyliu/pi-provider-arkcli`.
+pi clones the repo, records it in `~/.pi/agent/settings.json`, and loads it on
+every start. Update with `pi update git:github.com/trulyliu/pi-provider-arkcli`,
+remove with `pi remove git:github.com/trulyliu/pi-provider-arkcli`.
 
-Or load the checkout without installing, one invocation at a time:
+The first start after install has no cached catalog, so give an interactive
+session a few seconds (then Ctrl-C) before relying on `--list-models`/`-p`.
 
-```bash
-git clone https://github.com/trulyliu/pi-provider-arkcli ~/src/pi-provider-arkcli
-pi -e ~/src/pi-provider-arkcli                     # a directory follows package discovery
-pi -e ~/src/pi-provider-arkcli/src/index.ts        # or point at the entry file
-```
+Verified: `pi --list-models` shows 27 `arkcli` chat rows and pi's own store holds
+32 rows (27 chat + 5 image).
 
-The repo declares `pi.extensions: ["./src/index.ts"]`, so a clone is a package
-root and no build step runs before load.
-
-Then export the key:
+### Key and region
 
 ```bash
 export ARK_API_KEY=ark-...
 ```
 
-pi resolves `$ARK_API_KEY` itself; a key saved through pi's `/login` flow takes
+Both hosts fall back to this env var; a key saved through `/login` takes
 precedence. `ARK_BASE_URL` switches region (default
 `https://ark.cn-beijing.volces.com/api/v3`); ARK is regional, so the key must
 belong to the same region.
@@ -63,36 +71,6 @@ belong to the same region.
 they never touch the network; they read the cached catalog described under
 [Startup cost](#startup-cost). `pi update --models` does **not** help here: it
 refreshes built-in catalogs only and never loads extensions.
-
-Verified: after one discovery, `pi --list-models` shows 27 `arkcli` chat rows and
-pi's own store holds 32 rows (27 chat + 5 image).
-
-### omp
-
-```bash
-git clone https://github.com/trulyliu/pi-provider-arkcli ~/src/pi-provider-arkcli
-mkdir -p ~/.omp/agent/extensions
-ln -sfn ~/src/pi-provider-arkcli ~/.omp/agent/extensions/pi-provider-arkcli
-```
-
-The extension root is `<agent dir>/extensions` — `~/.omp/agent/extensions` by
-default, or `$PI_CODING_AGENT_DIR/extensions`. Each entry is a `.ts`/`.js` file, a
-directory with `index.ts`/`index.js`, or a directory whose `package.json` declares
-`omp.extensions` (this repo does). Symlinked directories are followed, so the
-clone stays a clone.
-
-Verified: with only a symlink there,
-`omp models --kind all` lists 27 chat + 5 image + 4 embedding `arkcli` rows and no
-`-e` flag.
-
-Or point omp at the entry file without installing:
-
-```bash
-omp -e ~/src/pi-provider-arkcli/src/index.ts models
-```
-
-omp uses the same `ARK_API_KEY` fallback; a key saved through omp's `/login` flow
-takes precedence.
 
 ### pi field differences
 
@@ -194,8 +172,25 @@ also needs ARK's search component activated on the account. See
 
 ## Development
 
-No build step; both hosts load `src/index.ts` directly (omp via Bun, pi via
-Node's type stripping). Node 22.6+ runs the same files for tests:
+Work from a clone and point a host at it — nothing to install, no build step:
+
+```bash
+git clone https://github.com/trulyliu/pi-provider-arkcli ~/src/pi-provider-arkcli
+
+omp -e ~/src/pi-provider-arkcli                 # a directory follows package discovery
+omp -e ~/src/pi-provider-arkcli/src/index.ts    # or the entry file
+
+pi -e ~/src/pi-provider-arkcli                  # same for pi
+pi -e ~/src/pi-provider-arkcli/src/index.ts
+```
+
+Both `package.json` manifests (`omp.extensions`, `pi.extensions`) point at
+`./src/index.ts`, so either form loads the same file. Use `-e` for iteration;
+reserve `omp plugin install` / `pi install` for a source you want registered
+permanently.
+
+Both hosts load `src/index.ts` directly (omp via Bun, pi via Node's type
+stripping). Node 22.6+ runs the same files for tests:
 
 ```bash
 node --test "test/*.test.ts"        # 77 tests: mapping, discovery, cache, registration, pi

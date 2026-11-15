@@ -210,17 +210,26 @@ persisted the store.
 never loads extensions (measured: prints `Model catalogs refreshed`, store stays
 empty).
 
-Installing as a package is equivalent to `-e`:
+Installing from the remote is equivalent to `-e`, and is what the README tells
+users to run:
 
 ```bash
-PI_CODING_AGENT_DIR=/tmp/piinstall pi install ./     # records the path in settings.json
+PI_CODING_AGENT_DIR=/tmp/piinstall pi install git:github.com/trulyliu/pi-provider-arkcli
+jq -r '.packages[]' /tmp/piinstall/settings.json     # git:github.com/trulyliu/pi-provider-arkcli
 PI_CODING_AGENT_DIR=/tmp/piinstall pi                # one interactive run, then Ctrl-C
 PI_CODING_AGENT_DIR=/tmp/piinstall pi --list-models | grep -c '^arkcli'   # 27
 ```
 
-`pi install git:github.com/trulyliu/pi-provider-arkcli` does the same from the
-remote; the clone is empty until the repo is pushed, which is itself a useful
-check that the manifest (`pi.extensions`) is what makes a clone loadable.
+`pi update git:github.com/trulyliu/pi-provider-arkcli` updates it and
+`pi remove git:github.com/trulyliu/pi-provider-arkcli` removes it; both were run
+against this repo. The same holds for omp's one-liner:
+
+```bash
+omp plugin install git:github.com/trulyliu/pi-provider-arkcli   # ✔ Installed pi-provider-arkcli@0.1.0
+omp models --kind all --json | jq '[.models[]|select(.provider=="arkcli")]|length'   # 36, no -e
+omp plugin upgrade pi-provider-arkcli    # picks up a new commit: "Upgraded … to a new revision"
+omp plugin uninstall pi-provider-arkcli
+```
 
 ## 5. Long context
 
