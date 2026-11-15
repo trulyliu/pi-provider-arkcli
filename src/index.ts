@@ -118,6 +118,16 @@ export function isInteractiveSession(
 	return first === undefined || first.startsWith("-");
 }
 
+/**
+ * `omp models refresh` is documented as "force a fresh catalog fetch (replaces
+ * rm -rf ~/.omp/models.db)", so it must bypass this cache too: measured argv is
+ * `[bun, /…/omp-linux-x64, models, refresh, …]`.
+ */
+export function isForcedRefresh(argv: readonly string[] = process.argv): boolean {
+	const args = argv.slice(2);
+	return args[0] === "models" && args[1] === "refresh";
+}
+
 /** One in-flight operation per cache file, so a double discovery call shares it. */
 const inFlightRefreshes = new Map<string, Promise<void>>();
 const inFlightFetches = new Map<string, Promise<ArkModelRow[]>>();
@@ -196,10 +206,12 @@ async function loadArkRows(options: {
 	fetch?: typeof globalThis.fetch;
 	warn: (message: string) => void;
 	allowNetwork: boolean;
+	/** The host asked for a fresh catalog (`omp models refresh`, pi `force`). */
+	force?: boolean;
 }): Promise<{ rows: ArkModelRow[]; source: "cache" | "network" | "none" }> {
 	if (!options.apiKey) return { rows: [], source: "none" };
 	const file = modelCacheFile(options.baseUrl, options.apiKey);
-	const cached = await readModelCache(file);
+	const cached = options.force ? undefined : await readModelCache(file);
 	const usable = cached && cached.baseUrl === options.baseUrl && cached.rows.length > 0 ? cached : undefined;
 	if (usable) {
 		const stale = Date.now() - usable.checkedAt >= cacheTtlMs();
@@ -247,6 +259,8 @@ export interface PiRefreshContext {
 	credential?: { type: string; key?: string };
 	stored?: { models?: readonly unknown[] };
 	allowNetwork: boolean;
+	/** pi sets this when the user forces a refresh; it bypasses freshness checks. */
+	force?: boolean;
 	signal: AbortSignal;
 	publish(publication: { persist?: unknown; update?: () => void }): Promise<boolean>;
 }
@@ -299,6 +313,7 @@ async function refreshPiModels(
 		signal: context.signal,
 		warn: deps.warn,
 		allowNetwork: context.allowNetwork && !context.signal.aborted,
+		force: context.force === true,
 	});
 	if (loaded.source === "none") return stored;
 
@@ -351,6 +366,7 @@ export default function arkcliExtension(pi: ArkExtensionApi) {
 				apiKey: credential ?? "",
 				warn,
 				allowNetwork: true,
+				force: isForcedRefresh(),
 			});
 			return mapArkModels(loaded.rows).models;
 		},

@@ -65,6 +65,11 @@ implements ARK's image endpoint for pi. See
     endpoint would pay the timeout again.
 18. **Never replace a usable catalog with an empty refresh.** The background
     refresh writes only when `rows.length > 0`.
+19. **`omp models refresh` must bypass the cache.** Its own help calls it "force
+    a fresh catalog fetch (replaces rm -rf ~/.omp/models.db)"; serving our disk
+    copy would make the command a no-op. Measured argv for it is
+    `[bun, /…/omp-linux-x64, models, refresh, …]`. pi's equivalent is
+    `context.force`, which the built-in UI does not set yet but the API defines.
 
 ## Update procedure
 

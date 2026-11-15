@@ -12,7 +12,7 @@ import {
 	readModelCache,
 	writeModelCache,
 } from "../src/cache.ts";
-import arkcliExtension, { cacheTtlMs, CACHE_TTL_MS, isInteractiveSession, NEGATIVE_TTL_MS } from "../src/index.ts";
+import arkcliExtension, { cacheTtlMs, CACHE_TTL_MS, isForcedRefresh, isInteractiveSession, NEGATIVE_TTL_MS } from "../src/index.ts";
 import type { OmpModelRow } from "../src/ark.ts";
 
 const payload = JSON.parse(
@@ -126,6 +126,19 @@ describe("cache ttl", () => {
 	it("ignores a value that is not a non-negative number", () => {
 		assert.equal(cacheTtlMs({ ARKCLI_CACHE_TTL_MS: "soon" }), CACHE_TTL_MS);
 		assert.equal(cacheTtlMs({ ARKCLI_CACHE_TTL_MS: "-1" }), CACHE_TTL_MS);
+	});
+});
+
+describe("forced refresh detection", () => {
+	it("recognises `omp models refresh`", () => {
+		assert.equal(isForcedRefresh(["/usr/bin/bun", "/…/omp-linux-x64", "models", "refresh"]), true);
+		assert.equal(isForcedRefresh(["/usr/bin/bun", "/…/omp-linux-x64", "models", "refresh", "-e", "/x"]), true);
+	});
+
+	it("does not treat a plain listing or a TUI start as forced", () => {
+		assert.equal(isForcedRefresh(["/usr/bin/bun", "/…/omp-linux-x64", "models", "--json"]), false);
+		assert.equal(isForcedRefresh(["/usr/bin/bun", "/…/omp-linux-x64", "models", "find", "x"]), false);
+		assert.equal(isForcedRefresh(["/usr/bin/bun", "/…/omp-linux-x64", "-e", "/x"]), false);
 	});
 });
 
@@ -291,6 +304,33 @@ describe("cache-first discovery", () => {
 		const rows = await fetchDynamicModels("ark-key");
 		assert.equal(counter.calls(), 1, "an empty cache must not pin an empty catalog");
 		assert.equal(rows.length > 0, true);
+	});
+
+	it("bypasses the cache when the host forces a refresh", async () => {
+		const counter = countingFetch();
+		let config: { refreshModels?: (context: unknown) => Promise<unknown[]> } | undefined;
+		process.env.ARK_BASE_URL = "https://ark.test/api/v3";
+		arkcliExtension({
+			registerProvider: (_name, provider) => {
+				config = provider as typeof config;
+			},
+			registerVirtualModel: () => {},
+		});
+		const refresh = (force: boolean) =>
+			config!.refreshModels!({
+				credential: { type: "api_key", key: "ark-key" },
+				allowNetwork: true,
+				force,
+				signal: new AbortController().signal,
+				publish: async () => true,
+			});
+
+		await refresh(false);
+		assert.equal(counter.calls(), 1);
+		await refresh(false);
+		assert.equal(counter.calls(), 1, "a non-forced refresh is served from disk");
+		await refresh(true);
+		assert.equal(counter.calls(), 2, "pi's force flag must bypass the cache");
 	});
 
 	it("separates catalogs by key", async () => {

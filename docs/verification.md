@@ -71,6 +71,20 @@ Measured, with `ARK_BASE_URL` pointed at a proxy that never answers `/models`:
 | `omp` TUI first paint, warm cache | 0.50 s |
 | `pi` TUI first paint, warm cache | 0.30 s |
 
+`omp models refresh` is the documented "force a fresh catalog" command, so it must
+bypass the cache — otherwise it would silently serve the 6 h-old copy:
+
+```bash
+# warm cache + pass-through proxy: refresh re-queries ARK, listing does not
+ARKCLI_CACHE_DIR=/tmp/arkcache ... omp models refresh -e "$PWD/src/index.ts"   # 1 request to /models
+ARKCLI_CACHE_DIR=/tmp/arkcache ... omp models --json   -e "$PWD/src/index.ts"  # 0 requests
+```
+
+omp then rewrites its own `models.db`: `model_cache` holds one row for `arkcli`
+(27 chat + 5 image + 4 embedding rows as JSON) and `model_cache_freshness.updated_at`
+moves on every refresh. pi's equivalent is `context.force`, which returns through
+the same path; the built-in pi UI does not set it yet.
+
 A one-shot invocation must never start a refresh it cannot use (a pending fetch
 delays exit — 22 s measured with a 20 s abort) and an interactive one must:
 

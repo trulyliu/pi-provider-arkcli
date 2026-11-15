@@ -102,11 +102,18 @@ waits for ARK the first time a given key is seen:
 | serve cache, no network | cache younger than 6 h (`ARKCLI_CACHE_TTL_MS`) |
 | serve cache + refresh behind | cache older than 6 h or a recent failure, **and** an interactive TUI session |
 | serve cache, no refresh | one-shot invocation: `omp models`, `omp -p`, `omp --mode=json`, `pi -p`, `pi --list-models` |
+| force one fetch, wait for it | `omp models refresh` (or pi's `force` flag): the documented way to replace a stale catalog |
 
 Measured on this machine: `omp models --json` against a hanging endpoint takes
 8.1 s with no result and 22 s when a fetch is left pending, which is why one-shot
 runs never start a refresh they cannot use. Both TUIs render in under 0.6 s with
 a hanging endpoint and a warm cache.
+
+This cache is not omp's. omp keeps its own per-provider copy in
+`<agent dir>/models.db` (tables `model_cache` + `model_cache_freshness`, host
+rows, not ARK rows); `omp models refresh` rewrites it. The two layers are
+independent: ours sits in front of the HTTP call, which is why `omp models
+refresh` bypasses it instead of being a no-op.
 
 `ARKCLI_CACHE_DIR` moves the cache (default `$XDG_CACHE_HOME/pi-provider-arkcli`
 or `~/.cache/pi-provider-arkcli`); `ARKCLI_CACHE_TTL_MS=0` forces the next
