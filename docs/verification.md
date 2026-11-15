@@ -239,7 +239,7 @@ PI_CODING_AGENT_DIR=/tmp/piinstall pi --list-models | grep -c '^arkcli'   # 27
 against this repo. The same holds for omp's one-liner:
 
 ```bash
-omp plugin install git:github.com/trulyliu/pi-provider-arkcli   # ✔ Installed pi-provider-arkcli@0.1.0
+omp plugin install git:github.com/trulyliu/pi-provider-arkcli   # ✔ Installed pi-provider-arkcli@0.2.0
 omp models --kind all --json | jq '[.models[]|select(.provider=="arkcli")]|length'   # 36, no -e
 omp plugin upgrade pi-provider-arkcli    # picks up a new commit: "Upgraded … to a new revision"
 omp plugin uninstall pi-provider-arkcli

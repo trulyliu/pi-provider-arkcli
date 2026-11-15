@@ -1,6 +1,6 @@
 {
 	"name": "pi-provider-arkcli",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"private": true,
 	"description": "Provider extension for Volcengine ARK (火山方舟): maps GET /api/v3/models onto pi and omp model rows",
 	"type": "module",
