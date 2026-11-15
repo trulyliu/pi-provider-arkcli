@@ -1,8 +1,8 @@
 {
-	"name": "omp-provider-ark",
+	"name": "pi-provider-arkcli",
 	"version": "0.1.0",
 	"private": true,
-	"description": "omp provider extension for Volcengine ARK (火山方舟): maps GET /api/v3/models onto omp model rows",
+	"description": "Provider extension for Volcengine ARK (火山方舟): maps GET /api/v3/models onto pi and omp model rows",
 	"type": "module",
 	"license": "MIT",
 	"engines": {
@@ -14,7 +14,11 @@
 		"models": "node scripts/dump-mapped-models.ts",
 		"fixture:ocr": "node scripts/make-ocr-fixture.ts",
 		"verify:wire": "./scripts/verify-wire.sh",
-		"verify:vision": "./scripts/verify-vision.sh"
+		"verify:vision": "./scripts/verify-vision.sh",
+		"verify:pi-wire": "./scripts/verify-pi-wire.sh"
+	},
+	"pi": {
+		"extensions": ["./src/index.ts"]
 	},
 	"omp": {
 		"extensions": ["./src/index.ts"]

@@ -6,6 +6,10 @@ Everything below was confirmed against a live payload
 (`test/fixtures/ark-models.sample.json`, 54 rows) and, where marked, against the
 API itself.
 
+The same mapper also feeds pi (`@earendil-works/pi-coding-agent`); the extra step
+that converts these rows to pi's `ProviderModelConfig` (thinking map, token field,
+image api, refresh lifecycle) is [pi-compatibility.md](pi-compatibility.md).
+
 ## Row selection
 
 A row becomes a model only if omp can actually talk to it.
@@ -99,3 +103,16 @@ default, so one mechanism is enough.
 | `fetchDynamicModels` has a 15 s timeout | One `GET /models`, no pagination, no per-model probes. |
 | `thinking` needs a non-empty `efforts` | `thinking` omitted entirely when no level is dialable. |
 | A failed discovery call disables the provider | `discoverArkModels` returns `[]` on error rather than throwing. |
+
+## pi-side constraints this mapping respects
+
+| Constraint | Consequence |
+|---|---|
+| `apiKey` is interpolated (`$NAME`), unset names are used literally | pi gets `"$ARK_API_KEY"`, omp keeps `"ARK_API_KEY"`. |
+| `detectCompat` sees ARK as stock OpenAI | `compat.maxTokensField: "max_tokens"` is set explicitly on every chat row. |
+| No embedding model type | 4 embedding rows dropped; the 27 chat rows are unaffected. |
+| `thinkingLevelMap` drives the offered levels | Unadvertised levels are `null`, not omitted. |
+| `refreshModels` replaces `models` instead of merging | Registration starts with `models: []`; the refresh is the only source. |
+| `--list-models`/`-p` never allow network | Stored rows are returned verbatim in those modes. |
+| A throw is a provider-wide refresh error | Failure returns the stored rows and logs. |
+| Image models are invisible to the picker | Reached through `models.generateImages()`; registered under a custom `ark-images` api. |

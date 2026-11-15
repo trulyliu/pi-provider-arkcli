@@ -1,9 +1,15 @@
 # AGENTS.md
 
-This repo is an omp provider extension for Volcengine ARK (火山方舟). The job is
-narrow: turn `GET /api/v3/models` rows into omp model rows so context window,
-vision, and thinking levels survive. When the user says "update the plugin
-according to the docs", follow this file.
+This repo is `pi-provider-arkcli`, a provider extension for Volcengine ARK
+(火山方舟), loaded by **pi** (`@earendil-works/pi-coding-agent`) and **omp**
+(oh-my-pi). The job is narrow: turn `GET /api/v3/models` rows into host model rows
+so context window, vision, and thinking levels survive. When the user says "update
+the plugin according to the docs", follow this file.
+
+`src/index.ts` detects the host from the extension API and registers the matching
+provider contract; `src/pi.ts` converts omp rows to pi configs, `src/pi-images.ts`
+implements ARK's image endpoint for pi. See
+[docs/pi-compatibility.md](docs/pi-compatibility.md) for the measured differences.
 
 ## Rules that cause silent, expensive failures
 
@@ -29,6 +35,18 @@ according to the docs", follow this file.
    on text-embedding rows (`doubao-embedding-large-text-250515`), so the
    embedding branch keys off `api_supported` alone. Gating it on
    `output_modalities == "embedding"` silently drops all four text embeddings.
+10. **pi needs `$ARK_API_KEY`, omp needs `ARK_API_KEY`.** pi only interpolates
+    `$NAME`/`${NAME}`/`!cmd`; a bare name becomes the literal key. Measured: a
+    bare name reached the wire as a 12-char string, not the real key.
+11. **Never omit `compat.maxTokensField` on a pi chat row.** pi's `detectCompat`
+    has no ARK case and picks `max_completion_tokens`; ARK 400s when both token
+    fields are present.
+12. **Never register pi `models` *and* expect a merge.** `refreshModels` replaces
+    the list; `models` must stay `[]` so the refresh is the only source.
+13. **Never let `refreshModels` throw.** A throw is a provider-wide refresh
+    error; return `context.stored` rows and log instead.
+14. **Never assume `--list-models`/`-p` see the network.** They always get
+    `allowNetwork: false` and no credential; only interactive mode refreshes.
 
 ## Update procedure
 
@@ -62,10 +80,14 @@ Look specifically for:
 
 ### 3. Update the mapper
 
-`src/ark.ts` is pure (no host imports) and is the only place mapping lives.
-`src/discovery.ts` owns HTTP. `src/index.ts` owns provider registration.
+`src/ark.ts` is pure (no host imports) and is the only place ARK→model mapping
+lives. `src/discovery.ts` owns HTTP. `src/pi.ts` converts omp rows to pi configs
+and `src/pi-images.ts` owns pi's image runner (also import-free so omp can parse
+it). `src/index.ts` owns host detection and registration.
 
-Keep this split: tests import `src/ark.ts` directly with Node's type stripping.
+Keep this split: tests import these modules directly with Node's type stripping,
+and omp must be able to parse every file in `src/` even though it never calls the
+pi ones.
 
 ### 4. Update the docs
 
@@ -73,12 +95,13 @@ Keep this split: tests import `src/ark.ts` directly with Node's type stripping.
 |---|---|
 | `docs/ark-models-api.md` | observed enums, counts, invariants, doc-vs-live mismatches |
 | `docs/field-mapping.md` | the field table and the reason for any new rule |
+| `docs/pi-compatibility.md` | pi field differences, refresh lifecycle, image runner |
 | `docs/ark-known-limits.md` | new server-side limits or fixed ones |
 | `README.md` | only user-visible behaviour (install, flags, capability table) |
 | `docs/verification.md` | new commands/expected values if a check changed |
 
 Any claim added to docs must name how it was observed (endpoint response, wire
-capture, or omp output).
+capture, or host output).
 
 ### 5. Verify
 
@@ -119,6 +142,28 @@ flaky test.
 Do not report a mapping change as done without the wire capture: `omp models
 --json` alone does not prove what omp sends.
 
+pi needs its own checks, because its model list is persisted rather than fetched
+per run:
+
+```bash
+# 1. registration: 27 rows, after one interactive session has persisted them
+PI_CODING_AGENT_DIR=/tmp/picheck pi -e "$PWD/src/index.ts"   # let it start, Ctrl-C
+PI_CODING_AGENT_DIR=/tmp/picheck pi --list-models -e "$PWD/src/index.ts" | grep -c '^arkcli'
+
+# 2. wire: high/off/max -> high/none/max, max_tokens advertised, no max_completion_tokens
+ARK_API_KEY=ark-... npm run verify:pi-wire
+```
+
+`--list-models` and `-p` never call ARK: they always receive
+`allowNetwork: false`. So an empty list there means "no interactive run has
+persisted a catalog yet" (or the interactive refresh failed — check
+`/tmp/pi-wire-tui.log`), not that registration is broken.
+
+`pi update --models` is **not** a shortcut here: it builds a `ModelRuntime` with
+the built-in providers only (`package-manager-cli.js` → `refreshModelCatalogs`),
+so it prints `Model catalogs refreshed` and leaves `arkcli` at 0 rows. Only an
+interactive session loads extensions and therefore publishes this catalog.
+
 ### 6. Update this file when the procedure changes
 
 If a step moved, a command changed, or a new trap appeared, edit AGENTS.md in the
@@ -138,10 +183,29 @@ same commit. A future run should not need to rediscover anything written here.
 | 400 `InvalidParameter` on every call | both `max_tokens` and `max_completion_tokens` sent |
 | `ToolNotOpen` | ARK search component not activated on the account |
 
+pi-only:
+
+| Symptom | Check |
+|---|---|
+| `--list-models` shows no `arkcli` rows | no interactive session has persisted a catalog yet; run `pi -e <entry>` once, then retry |
+| `pi update --models` printed success but rows are still 0 | expected: it only refreshes built-in catalogs; use an interactive session |
+| extension does not load from a clone | `package.json` must keep `pi.extensions: ["./src/index.ts"]`; `pi -e <dir>` relies on it |
+| interactive run shows errors but no rows | `<agent dir>/models-store.json` unwritten — look for the refresh warning; a throw here is the cause |
+| 401 on the first turn | `apiKey` lost its `$` (pi used the bare name as the key) |
+| 400 on every turn | `compat.maxTokensField` not pinned to `max_tokens` |
+| `--thinking off` still thinks | `thinkingLevelMap.off` is `null`/absent instead of `"none"` |
+| image model "missing" from `/model` | expected: pi never lists image models; use `models.generateImages()` |
+| models vanish after an edit | `refreshModels` returned `[]` instead of the stored rows |
+
 ## Invariants to keep
 
-- `src/ark.ts` has no imports from the omp host, so it runs under plain Node.
+- `src/ark.ts`, `src/pi.ts` and `src/pi-images.ts` import nothing from either
+  host, so they run under plain Node and omp can parse them.
 - `mapArkModel` never emits `input` values outside `["text","image"]`.
 - `thinking` is omitted (not empty) when no level is dialable.
 - `kind` matches what `api` can serve.
 - Discovery is one HTTP GET; `fetchDynamicModels` has a 15 s budget.
+- The pi branch never throws from `refreshModels` and never returns a list it
+  cannot also persist.
+- Host detection is API-shape only (`registerVirtualModel`); no host package is
+  imported.
